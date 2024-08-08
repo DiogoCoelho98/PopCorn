@@ -6,10 +6,10 @@ import Box from "./Box.jsx";
 import Movies from "./Movies";
 import MoviesSummary from "./MoviesSummary";
 import WatchedMovies from "./WatchedMoviesList";
-import StarRating from "./StarRating.jsx";
+import Loader from "./Loader.jsx";
+import ErrorMessage from "./ErrorMessage.jsx";
 
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 
 const tempMovieData = [
@@ -62,20 +62,60 @@ const tempWatchedData = [
 const average = (arr) =>
   arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
 
+const API_KEY = "19922d20";
+
 export default function App() {
-  const [movies, setMovies] = useState(tempMovieData);
+  const [movies, setMovies] = useState([]);
   const [watched, setWatched] = useState(tempWatchedData);
+  const [loader, setLoader] = useState(false);
+  const [error, setError] = useState(""); 
+  const [query, setQuery] = useState("")
+
+  useEffect(() => { 
+    if (query.length < 3) {
+      return setMovies([]), setError("");
+      
+    }
+
+    fetchData(query);
+  }, [query])
+
+  async function fetchData(query) {
+    try {
+      setLoader(true);
+      setError("");
+      
+      const data = await fetch(`http://www.omdbapi.com/?apikey=${API_KEY}&s=${query}`);
+      if (!data.ok) throw new Error("Something went wrong");
+    
+      const res = await data.json(); 
+      if (res.Response === 'False') throw new Error("Movie not found");
+
+      const getData = res.Search;
+      setMovies(getData);
+    } catch (err) {
+      console.error(err.message);
+      setError(err.message);
+    }
+    // Always runs
+    finally { 
+      setLoader(false);
+    }
+  }
+  
 
   return (
     <>
       <NavBar>
-          <Search />
+          <Search query = {query} setQuery = {setQuery}/>
           <NumResults movies={movies}/>
       </NavBar>
 
       <PopCornMain> 
           <Box>
-              <Movies movies={movies}/>
+              {loader && <Loader />}
+              {error && <ErrorMessage message = {error}/>}
+              {!loader && !error && <Movies movies={movies}/>}
           </Box>
 
           <Box>
