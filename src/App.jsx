@@ -8,6 +8,7 @@ import MoviesSummary from "./MoviesSummary";
 import WatchedMovies from "./WatchedMoviesList";
 import Loader from "./Loader.jsx";
 import ErrorMessage from "./ErrorMessage.jsx";
+import MovieDetails from "./MovieDetails.jsx";
 
 import { useState, useEffect } from "react";
 
@@ -66,16 +67,30 @@ const API_KEY = "19922d20";
 
 export default function App() {
   const [movies, setMovies] = useState([]);
-  const [watched, setWatched] = useState(tempWatchedData);
+  const [watched, setWatched] = useState([]);
   const [loader, setLoader] = useState(false);
   const [error, setError] = useState(""); 
-  const [query, setQuery] = useState("")
+  const [query, setQuery] = useState("");
+  const [selectedID, setSelectedID] = useState(null);
+
+  function handleSelectedID(id) {
+    setSelectedID(selectedID => id === selectedID ? null : id);
+  }
+
+  function handleCloseSelectedID() {
+    setSelectedID(null);
+  }
+
+  function handleAddWatched(movie) {
+    setWatched(watched => [...watched, movie]);
+  }
+
+  function handleDeleteWatched(id){
+    setWatched(watched => watched.filter(movie => movie.imdbID !== id));
+  }
 
   useEffect(() => { 
-    if (query.length < 3) {
-      return setMovies([]), setError("");
-      
-    }
+    if (query.length < 3) return setMovies([]), setError("");
 
     fetchData(query);
   }, [query])
@@ -115,12 +130,16 @@ export default function App() {
           <Box>
               {loader && <Loader />}
               {error && <ErrorMessage message = {error}/>}
-              {!loader && !error && <Movies movies={movies}/>}
+              {!loader && !error && <Movies movies={movies} onHandleSelectedID = {handleSelectedID}/>}
           </Box>
 
           <Box>
-              <MoviesSummary watched={watched} average={average}/>
-              <WatchedMovies watched={watched}/>
+              {selectedID ? <MovieDetails selectedID = {selectedID} onHandleCloseSelectedID = {handleCloseSelectedID} onHandleAddWatched = {handleAddWatched} watched = {watched}/> :
+              <> 
+                <MoviesSummary watched={watched} average={average}/>
+                <WatchedMovies watched={watched} onDeleteWatched={handleDeleteWatched}/>
+              </>
+              }
           </Box>
       </PopCornMain>
     </>

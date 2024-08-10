@@ -1,9 +1,9 @@
 import Movie from "./Movie";
 
-export default function Movies({ movies }) { 
+export default function Movies({ movies, onHandleSelectedID }) { 
     return (
-        <ul className="list">
-            {movies?.map((movie) => <Movie movie={movie} key={movie.imdbID}/>)}
+        <ul className="list list-movies">
+            {movies?.map((movie) => <Movie movie={movie} onHandleSelectedID = {onHandleSelectedID} key={movie.imdbID}/>)}
           </ul>
     )
 }
