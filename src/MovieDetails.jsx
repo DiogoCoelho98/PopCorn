@@ -42,6 +42,25 @@ export default function MovieDetails({selectedID, onHandleCloseSelectedID, onHan
         getMoviesData();
     }, [selectedID])
 
+    useEffect(() => {
+        if (!title) return;
+        document.title = title;
+        return function() {
+            return document.title = "🍿 PopCorn";
+        }
+    }, [title]);
+
+    useEffect(() => {
+        const callBack = (event) => {
+            if (event.code === "Escape") return onHandleCloseSelectedID();
+        }
+        document.addEventListener("keydown", callBack);
+
+        return function() {
+            return document.removeEventListener("keydown", callBack);
+        }
+    }, [onHandleCloseSelectedID]);
+
     return (
         <div className="details">
             {loader ? <Loader /> : 
@@ -68,8 +87,6 @@ export default function MovieDetails({selectedID, onHandleCloseSelectedID, onHan
                         }
                     </div>
                     
-                    
-
                     <p><em>{plot}</em></p>
                     <p>Starring {actors}</p>
                     <p>Directed by {director}</p>

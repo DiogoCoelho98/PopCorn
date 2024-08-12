@@ -89,35 +89,46 @@ export default function App() {
     setWatched(watched => watched.filter(movie => movie.imdbID !== id));
   }
 
-  useEffect(() => { 
-    if (query.length < 3) return setMovies([]), setError("");
+  useEffect(() => {
+    const controller = new AbortController(); // Web API function
 
-    fetchData(query);
-  }, [query])
-
-  async function fetchData(query) {
-    try {
-      setLoader(true);
+    if (query.length < 3) {
+      setMovies([]);
       setError("");
-      
-      const data = await fetch(`http://www.omdbapi.com/?apikey=${API_KEY}&s=${query}`);
-      if (!data.ok) throw new Error("Something went wrong");
-    
-      const res = await data.json(); 
-      if (res.Response === 'False') throw new Error("Movie not found");
+      handleCloseSelectedID();
+      return;
+    }
 
-      const getData = res.Search;
-      setMovies(getData);
-    } catch (err) {
-      console.error(err.message);
-      setError(err.message);
+    async function fetchData(query) {
+      try {
+        setLoader(true);
+        setError("");
+        const response = await fetch(`http://www.omdbapi.com/?apikey=${API_KEY}&s=${query}`, { signal: controller.signal });
+        if (!response.ok) throw new Error("Something went wrong");
+        const res = await response.json();
+        if (res.Response === 'False') throw new Error("Movie not found");
+        const getData = res.Search;
+        // Data to display in <Movies />
+        setMovies(getData);
+        setError("");
+
+      } catch (err) {
+        if (err.name !== "AbortError") setError(err.message);
+        console.log(err.message); 
+      }
+
+      // Always runs
+      finally {
+        setLoader(false);
+      }
     }
-    // Always runs
-    finally { 
-      setLoader(false);
-    }
-  }
-  
+    fetchData(query);
+
+    // Cleanup function
+    return function() {
+      controller.abort();
+    };
+  }, [query])
 
   return (
     <>
