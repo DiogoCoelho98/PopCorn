@@ -1,3 +1,4 @@
-export default function Loader() {
-    return <h1 className="loader">🔜🔄️</h1>
+
+export default function Loader({children}) {
+    return <div className="loader">{children}</div>
 }

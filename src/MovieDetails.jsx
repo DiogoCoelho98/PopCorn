@@ -1,7 +1,8 @@
 import StarRating from "./StarRating.jsx";
 import Loader from "./Loader.jsx";
+import useKey from "./useKey.js"
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 
 const API_KEY = "19922d20";
@@ -16,6 +17,8 @@ export default function MovieDetails({selectedID, onHandleCloseSelectedID, onHan
     const isWatched = watched.map(movie => movie.imdbID).includes(selectedID);
     const watchedUserRating = watched.find(movie => movie.imdbID === selectedID)?.userRating;
 
+    const countRef = useRef(0);
+
     function handleAdd() {
         const newWatchedMovie = {
             imdbID: selectedID,
@@ -24,7 +27,8 @@ export default function MovieDetails({selectedID, onHandleCloseSelectedID, onHan
             poster,
             imdbRating: Number(imdbRating),
             runtime: Number(runtime.split(" ")[0]),
-            userRating: Number(userRating)
+            userRating: Number(userRating),
+            CountRating: countRef.current
         }   
 
         onHandleAddWatched(newWatchedMovie);
@@ -34,7 +38,7 @@ export default function MovieDetails({selectedID, onHandleCloseSelectedID, onHan
     useEffect(() => {
         async function getMoviesData() {
             setLoader(true);
-            const res = await fetch(`http://www.omdbapi.com/?apikey=${API_KEY}&i=${selectedID}`);
+            const res = await fetch(`http://www.omdbapi.com/?apikey=${import.meta.env.VITE_API_KEY}&i=${selectedID}`);
             const data = await res.json();
             setMovieDetails(data);
             setLoader(false);
@@ -49,24 +53,19 @@ export default function MovieDetails({selectedID, onHandleCloseSelectedID, onHan
             return document.title = "🍿 PopCorn";
         }
     }, [title]);
+    // Closes <MovieDetails /> when Escape it's pressed 
+    useKey("Escape", onHandleCloseSelectedID);
 
     useEffect(() => {
-        const callBack = (event) => {
-            if (event.code === "Escape") return onHandleCloseSelectedID();
-        }
-        document.addEventListener("keydown", callBack);
-
-        return function() {
-            return document.removeEventListener("keydown", callBack);
-        }
-    }, [onHandleCloseSelectedID]);
+        if (userRating) countRef.current++; 
+    }, [userRating])
 
     return (
         <div className="details">
             {loader ? <Loader /> : 
             <>
                 <header>
-                    <button className="btn-back" onClick = {onHandleCloseSelectedID}>&larr;</button>
+                    <button className="btn-back" onClick = {onHandleCloseSelectedID}>⬅️</button>
                     <img src={poster} alt={title} />
                     <div className="details-overview">
                         <h2>{title}</h2>
