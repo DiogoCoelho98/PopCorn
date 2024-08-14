@@ -16,7 +16,6 @@ import { useState, useEffect } from "react";
 const average = (arr) =>
   arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
 
-/* const API_KEY = "19922d20";*/
 export default function App() {
   const [movies, setMovies] = useState([]);
   const [watched, setWatched] = useState(function() {

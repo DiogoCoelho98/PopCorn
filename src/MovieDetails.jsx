@@ -4,9 +4,6 @@ import useKey from "./useKey.js"
 
 import { useEffect, useState, useRef } from "react";
 
-
-const API_KEY = "19922d20";
-
 export default function MovieDetails({selectedID, onHandleCloseSelectedID, onHandleAddWatched, watched}) {
     const [movieDetails, setMovieDetails] = useState({});
     const [loader, setLoader] = useState(false);
