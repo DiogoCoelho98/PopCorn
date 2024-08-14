@@ -9,8 +9,6 @@ PopCorn is a web application designed to let users search for movies dynamically
 <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" alt="JavaScript icon" />
 <img src="https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white" alt="HTML5 icon" />
 <img src="https://img.shields.io/badge/CSS-1572B6?style=for-the-badge&logo=css3&logoColor=white" alt="CSS icon" />
-<img src="https://img.shields.io/badge/OMDb-000000?style=for-the-badge&logo=movie&logoColor=white" alt="OMDb icon" />
-<img src="https://img.shields.io/badge/Font%20Awesome-339AF0?style=for-the-badge&logo=font-awesome&logoColor=white" alt="Font Awesome icon" />
 
 ## Decisions and Some Considerations
 - **React**: Chosen for its powerful component-based architecture, which allows for efficient and dynamic rendering of movie search results and user interactions. React's ecosystem also includes hooks and state management that facilitate a smooth user experience.
