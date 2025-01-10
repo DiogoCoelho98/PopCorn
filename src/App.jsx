@@ -18,17 +18,17 @@ const average = (arr) =>
 
 export default function App() {
   const [movies, setMovies] = useState([]);
-  const [watched, setWatched] = useState(function() {
-      const storedValue = JSON.parse(localStorage.getItem("watched"));
-      return storedValue;
-    });
+  const [watched, setWatched] = useState(function () {
+    const storedValue = JSON.parse(localStorage.getItem("watched"));
+    return storedValue ?? [];
+  });
   const [loader, setLoader] = useState(false);
-  const [error, setError] = useState(""); 
+  const [error, setError] = useState("");
   const [query, setQuery] = useState("");
   const [selectedID, setSelectedID] = useState(null);
 
   function handleSelectedID(id) {
-    setSelectedID(selectedID => id === selectedID ? null : id);
+    setSelectedID((selectedID) => (id === selectedID ? null : id));
   }
 
   function handleCloseSelectedID() {
@@ -36,11 +36,11 @@ export default function App() {
   }
 
   function handleAddWatched(movie) {
-    setWatched(watched => [...watched, movie]);
+    setWatched((watched) => [...watched, movie]);
   }
 
-  function handleDeleteWatched(id){
-    setWatched(watched => watched.filter(movie => movie.imdbID !== id));
+  function handleDeleteWatched(id) {
+    setWatched((watched) => watched.filter((movie) => movie.imdbID !== id));
   }
 
   useEffect(() => {
@@ -57,29 +57,31 @@ export default function App() {
       try {
         setLoader(true);
         setError("");
-        const response = await fetch(`http://www.omdbapi.com/?apikey=${import.meta.env.VITE_API_KEY}&s=${query}`, { signal: controller.signal });
+        const response = await fetch(
+          `http://www.omdbapi.com/?apikey=${
+            import.meta.env.VITE_API_KEY
+          }&s=${query}`,
+          { signal: controller.signal }
+        );
         if (!response.ok) throw new Error("Something went wrong");
         const res = await response.json();
-        if (res.Response === 'False') throw new Error("Movie not found");
+        if (res.Response === "False") throw new Error("Movie not found");
         const getData = res.Search;
         // Data to display in <Movies />
         setMovies(getData);
         setError("");
-
       } catch (err) {
         if (err.name !== "AbortError") setError(err.message);
-        console.log(err.message); 
-      }
-
-      // Always runs
-      finally {
+        console.log(err.message);
+      } finally {
+        // Always runs
         setLoader(false);
       }
     }
     fetchData(query);
 
     // Cleanup function
-    return function() {
+    return function () {
       controller.abort();
     };
   }, [query]);
@@ -91,26 +93,42 @@ export default function App() {
   return (
     <>
       <NavBar>
-          <Search query = {query} setQuery = {setQuery}/>
-          <NumResults movies={movies}/>
+        <Search query={query} setQuery={setQuery} />
+        <NumResults movies={movies} />
       </NavBar>
 
-      <PopCornMain query={query}> 
-          <Box>
-              {loader && <Loader><ReactLoading type="spinningBubbles" color="#ffffff"/></Loader>}
-              {error && <ErrorMessage message = {error}/>}
-              {!loader && !error && <Movies movies={movies} onHandleSelectedID = {handleSelectedID}/>}
-          </Box>
+      <PopCornMain query={query}>
+        <Box>
+          {loader && (
+            <Loader>
+              <ReactLoading type="spinningBubbles" color="#ffffff" />
+            </Loader>
+          )}
+          {error && <ErrorMessage message={error} />}
+          {!loader && !error && (
+            <Movies movies={movies} onHandleSelectedID={handleSelectedID} />
+          )}
+        </Box>
 
-          <Box>
-              {selectedID ? <MovieDetails selectedID = {selectedID} onHandleCloseSelectedID = {handleCloseSelectedID} onHandleAddWatched = {handleAddWatched} watched = {watched}/> :
-              <> 
-                <MoviesSummary watched={watched} average={average}/>
-                <WatchedMovies watched={watched} onDeleteWatched={handleDeleteWatched}/>
-              </>
-              }
-          </Box>
+        <Box>
+          {selectedID ? (
+            <MovieDetails
+              selectedID={selectedID}
+              onHandleCloseSelectedID={handleCloseSelectedID}
+              onHandleAddWatched={handleAddWatched}
+              watched={watched}
+            />
+          ) : (
+            <>
+              <MoviesSummary watched={watched} average={average} />
+              <WatchedMovies
+                watched={watched}
+                onDeleteWatched={handleDeleteWatched}
+              />
+            </>
+          )}
+        </Box>
       </PopCornMain>
     </>
-  ) 
-} 
+  );
+}
