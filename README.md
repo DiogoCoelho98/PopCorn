@@ -50,6 +50,9 @@ npm run dev
 - Search for Movies: Use the search bar to find movies and view their details.
 - Add a rating and add the movie to your watched list.
 
+## Project Link
+**https://popcorn-diogo.netlify.app/**
+
 ## Contacts
 - **https://www.linkedin.com/in/diogo-borges-coelho/**
 - **diogocoelho19988@gmail.com**
