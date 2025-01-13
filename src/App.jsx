@@ -58,7 +58,7 @@ export default function App() {
         setLoader(true);
         setError("");
         const response = await fetch(
-          `http://www.omdbapi.com/?apikey=${
+          `https://www.omdbapi.com/?apikey=${
             import.meta.env.VITE_API_KEY
           }&s=${query}`,
           { signal: controller.signal }
