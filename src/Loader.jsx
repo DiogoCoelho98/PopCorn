@@ -1,4 +1,3 @@
-
-export default function Loader({children}) {
-    return <div className="loader">{children}</div>
+export default function Loader({ children }) {
+  return <div className="loader">{children}</div>;
 }

@@ -67,15 +67,13 @@ export default function App() {
         const res = await response.json();
         if (res.Response === "False") throw new Error("Movie not found");
         const getData = res.Search;
-        // Data to display in <Movies />
         setMovies(getData);
         setError("");
       } catch (err) {
         if (err.name !== "AbortError") setError(err.message);
         console.log(err.message);
       } finally {
-        // Always runs
-        setLoader(false);
+        setLoader(false); // Always runs
       }
     }
     fetchData(query);

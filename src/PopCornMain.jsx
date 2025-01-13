@@ -1,10 +1,11 @@
 export default function PopCornMain({ children, query }) {
-  const boxStyle = query?.length > 2 ?  {height: "fit-content"} : {}; 
+  const boxStyle = query?.length > 2 ? { height: "fit-content" } : {};
 
-
-    return (
-      <>
-        <main className="main" style={boxStyle}>{children}</main>
-      </>
-    )
+  return (
+    <>
+      <main className="main" style={boxStyle}>
+        {children}
+      </main>
+    </>
+  );
 }
